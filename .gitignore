@@ -1,0 +1,6 @@
+/target/
+/vid/
+/vid_list.txt*
+/new_vid_list.txt*
+0*
+*.log
