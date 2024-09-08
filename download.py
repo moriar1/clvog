@@ -33,8 +33,16 @@ class loggerOutputs:
         print(msg)
 
 
-with open(sys.argv[1], 'r') as file:
-    log = open('failed_downloads.log', 'w')
+if len(sys.argv) > 1:
+    list_path = sys.argv[1]
+else:
+    list_path = "vid_list.txt"
+
+run_from = os.getcwd()
+with open(list_path, 'r') as file:
+    if len(sys.argv) == 3:
+        os.chdir(sys.argv[2])
+    log = open(f'{run_from}/failed_downloads.log', 'w')
     for line in file:
         # extract file name and link
         match = re.match(r'(\S+)\s+(https?://\S+)', line.strip())
@@ -67,8 +75,8 @@ with open(sys.argv[1], 'r') as file:
                 dummy = video_name[0:5] + "AAA.mp4"
                 open(dummy, 'a').close()
 log.close()
-if (os.stat('failed_downloads.log').st_size == 0):
-    os.remove('failed_downloads.log')
+if (os.stat(f'{run_from}/failed_downloads.log').st_size == 0):
+    os.remove(f'{run_from}/failed_downloads.log')
 
 # Using external dowloader: yt_dlp --downloader aria2c "https://"
 # coub loop issue: github.com/yt-dlp/yt-dlp/issues/1930

@@ -20,10 +20,9 @@ To download project use
 ```bash
 git clone https://github.com/moriar1/clvog
 cd clvog
-mkdir vid # required create directory `vid` 
 ```
 
-### Explaining `new_vid_list.txt` content
+### `new_vid_list.txt` content
 It contains required names and link to video: `<type>-<date_of_source>-<date_of_discvery>.mp4 <link> (<description>)`
 (See its content using your text editor for exact names.
 Types are: AV, AMV, MAD. See [reference](#list-structure) for more.)
@@ -52,12 +51,7 @@ In this example you see new files:
 - `0002-AAA.mp4`
 - `0003-AMV-20240225-20240303.mp4`
 
-`0002-AAA.mp4` created because it must be downloaded manually.
-
-Move new videos in `vid/` directory (`clvog` will `check` video file names in it and in `vid_list.txt` next time):
-```bash
-mv 0* vid/
-```
+empty `0002-AAA.mp4` created because it must be downloaded manually.
 
 Before using `add` again clear `new_vid_list.txt` content and write your new videos in it.
 
@@ -68,9 +62,9 @@ See [TODO](#todo).
 - `-u, --skip-check`
 - `-v, --verbose`  
 - `-V, --version`  
-- `insert <num> <filename>`
+- `insert <NUM> <VID_PATH>`
 - `add`
-- `add -p <PATH>`
+- `add -l <NEW_LIST_PATH>, -d <VID_DIR_PATH>`
 - `move <num> <num>`
 - `pull # rename video files from list to dir (-u option disabled)`
 - `sync # rename records from dir to list (-u option disabled)`
@@ -79,15 +73,15 @@ See [TODO](#todo).
 - `hide <type> [,<type>,..] # files only`
 - `check # verfiy directory and list names matching (runs before any action)`  
 
-Example: `clvog add -vup push_list.txt`
+Example: `clvog add -vul push_list.txt`
  – add new videos from `push_list.txt` to `vid_list.txt` with output debug infromation and without `check` names mathcing
 
 ### Main actions:
-#### `add` and `add -p <PATH>`
+#### `add -l <NEW_LIST_PATH>, -d <VID_DIR_PATH>`
 
-Download and insert videos from `new_vid_list.txt` or from `<PATH>` text file at the end of `vid_list.txt`
+Download and insert videos from `new_vid_list.txt` or from `<NEW_LIST_PATH>` text file at the end of `vid_list.txt`
 ##### Example
-`new_video_list.txt`:
+`new_list_path.txt`:
 > AMV-31122020-31122020.mp4 https://some_link.com  
 > AMV-31122020-31122020.mp4 https://another_link.com  
 > AMV-01012000-31012002.mp4 https://*some_broken_link.com  
@@ -101,7 +95,7 @@ Download and insert videos from `new_vid_list.txt` or from `<PATH>` text file at
 > `<end of list>`  
 
 It also downloads these videos and rename files according the list
-`/path/to/video_directory/` (`./` by default):  
+`/path/to/video_directory/` (`./vid/` by default):  
 > ...  
 > ./23-AMV-31122020-31122020.mp4  
 > etc.  
@@ -117,7 +111,7 @@ Clvog will
 delete file under `<num>`
 ##### Example
 
-`vid_list.txt` and `path/to/video_dir` (`./vid` by default):
+`vid_list.txt` and `path/to/video_dir` (`./vid/` by default):
 > 34-AV-11-11.mp4 https://0  
 > 35-AMV-22-22.mp4 https://1  
 > 36-AMV-22-22.mp4 https://2  
@@ -208,7 +202,7 @@ Comments (for example, in `comments.txt` file or in description to last video)
 # TODO:
 - [ ] implement all commands
     - [x] check
-    - [ ] add (with `-p` option)
+    - [x] add
     - [ ] insert
     - [ ] sync
     - [ ] pull
@@ -218,8 +212,9 @@ Comments (for example, in `comments.txt` file or in description to last video)
     - [ ] rename
 - [ ] add caching to `get_entries()` and `get_records()` in `actions.rs` (see [example](./misc/cache.rs))
 - [ ] add `version` command with the same output as `--version` or `-V` option
-- [ ] download videos in `./vid/` directory
- 
+- [ ] download videos in `./vid/` directory  
+- [ ] add parallel download requests
+
 ## Future of Anime Music Video Organizer
 Clvog is the first step to creating fully-featured Anime Music Video Organizer with TUI
 (looks like [ranger](https://github.com/ranger/ranger) and shows more video previews)
