@@ -54,14 +54,14 @@ pub fn check(config: &Config) {
     // NOTE loop check only existing records and dir entries,
     // so if you have extra records in vid_list.txt, but these videos are not exist in ./vid/
     // directory then verifing will still passes.
-    // TODO: Uncomment if needs:
-    assert_eq!(
-        list_records.len(),
-        dir_entries.len(),
-        "list len: {}, dir len: {}",
-        list_records.len(),
-        dir_entries.len()
-    );
+    // TODO: Comment if needs:
+    // assert_eq!(
+    //     list_records.len(),
+    //     dir_entries.len(),
+    //     "list len: {}, dir len: {}",
+    //     list_records.len(),
+    //     dir_entries.len()
+    // );
     let mut i = 0; // TODO: use enumerate() from 1
     for (entry, rec) in dir_entries.iter().zip(list_records.iter()) {
         i += 1;
@@ -125,6 +125,7 @@ pub fn add(config: &Config, new_list_path: &Path, vid_path: &Path) {
 
     // Create backups of lists before writing
     // TODO: add option to skip backup
+    // TODO: backup in separte function
     for &list in &[&new_list_path, &config.list_path] {
         fs::copy(list, list.to_str().unwrap().to_string() + ".bak")
             .unwrap_or_else(|e| panic!("Error: cannot create backup of lists: {e:?}"));
@@ -150,4 +151,39 @@ pub fn add(config: &Config, new_list_path: &Path, vid_path: &Path) {
         .stderr(Stdio::inherit())
         .output()
         .unwrap();
+}
+
+/// # Panics
+pub fn sync(config: &Config) {
+    let mut list_file = OpenOptions::new()
+        .write(true)
+        .open(config.list_path)
+        .unwrap();
+
+    fs::copy(
+        config.list_path,
+        config.list_path.to_str().unwrap().to_string() + ".bak",
+    )
+    .unwrap_or_else(|e| panic!("Error: cannot create backup of lists: {e:?}"));
+
+    let dir_entries = get_entries(config.dir_path);
+    let list_records = get_records(config.list_path);
+    let mut i = 0;
+    loop {
+        if list_records.get(i).is_none() || dir_entries.get(i).is_none() {
+            break;
+        }
+        list_file.write_all(dir_entries[i].as_bytes()).unwrap();
+        let (_, description) = list_records[i].split_once(' ').unwrap_or(("", ""));
+        if !description.is_empty() {
+            list_file
+                .write_all((" ".to_owned() + description).as_bytes())
+                .unwrap();
+        }
+        if config.is_verbose {
+            println!("Writing: {} {}", dir_entries[i], description);
+        }
+        list_file.write_all("\n".as_bytes()).unwrap();
+        i += 1;
+    }
 }

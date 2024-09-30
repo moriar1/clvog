@@ -23,4 +23,9 @@ pub fn cli() -> Command {
         .subcommand(
             Command::new("version")
                 .arg(arg!(-v --"verbose" "Show debug information").required(false)))
+        .subcommand(
+            Command::new("sync")
+            .about("write dir_entries to vid_list.txt")
+            .arg(arg!(-v --"verbose" "Show debug information").required(false))
+    )
 } //subc: help, version

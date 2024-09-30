@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use clap::crate_version;
-use clvog::{actions, Config};
+use clvog::{actions, sync, Config};
 
 fn main() {
     let matches = clvog::cli().get_matches();
@@ -42,6 +42,7 @@ fn main() {
 
             actions::add(&config, new_list_path, vid_path);
         }
+        ("sync", _) => sync(&config),
         ("version", _) => println!("clvog {}", crate_version!()),
         // ("hide", sub_match) => dir_actions::DirOrganizer::build().hide(),
         _ => todo!(),
